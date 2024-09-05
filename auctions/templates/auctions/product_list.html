@@ -1,17 +1,31 @@
 <!-- ICS-auction/auctions/templates/auctions/product_list.html -->
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Product List</title>
-</head>
 <body>
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <p>You are not logged in. <a href="{% url 'login' %}">Login</a></p>
+    {% endif %}
     <h1>Product List</h1>
     <ul>
         {% for product in products %}
-            <li>{{ product.name }}- {{product.description}} - Starting Bid: {{ product.starting_bid }}</li>
-        {% empty %}
-            <li>No products available.</li>
+            <li>
+                {{ product.name }} - Starting Bid: {{ product.starting_bid }} <br>
+                Current Bid: {{ product.current_bid }}
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    {{ form.amount.label }}: {{ form.amount }}
+                    <button type="submit">Place Bid</button>
+                </form>
+                {% if error_message %}
+                    <p style="color: red;">{{ error_message }}</p>
+                {% endif %}
+            </li>
         {% endfor %}
-    </ul>
+    </ul>    
 </body>
-</html>
+
