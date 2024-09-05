@@ -1,0 +1,23 @@
+pip install django
+
+django-admin startproject ICS_auction .
+
+python manage.py startapp auctions
+
+#edit the settings to add auctions to the INSTALLED APPS
+
+defined model "Products"
+
+python manage.py makemigrations
+
+python manage.py migrate
+
+#register the product to the admin panel
+admin.site.register(Product)
+
+#create superuser
+python manage.py createsuperuser
+
+#run server
+python manage.py runserver
+

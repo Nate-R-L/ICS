@@ -1,0 +1,17 @@
+<!-- ICS-auction/auctions/templates/auctions/product_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List</title>
+</head>
+<body>
+    <h1>Product List</h1>
+    <ul>
+        {% for product in products %}
+            <li>{{ product.name }}- {{product.description}} - Starting Bid: {{ product.starting_bid }}</li>
+        {% empty %}
+            <li>No products available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
