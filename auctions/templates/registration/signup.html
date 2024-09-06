@@ -1,0 +1,15 @@
+<h1>Join Our Auction Platform!</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div>
+            {{ field.label_tag }}
+            {{ field }}
+            <!-- Help text is not rendered here -->
+        </div>
+    {% endfor %}
+    <button type="submit">Sign Up</button>
+</form>
+
+<p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
