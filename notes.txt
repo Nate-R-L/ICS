@@ -21,3 +21,20 @@ python manage.py createsuperuser
 #run server
 python manage.py runserver
 
+#IN ORDER TO VIEW THE DATABASES
+python manage.py shell
+from auctions.models import Bid
+all_bids = Bid.objects.all()
+for bid in all_bids:
+    print(f"User: {bid.user.username}, Product: {bid.product.name}, Amount: {bid.amount}, Timestamp: {bid.created_at}")
+
+bids for a specific product:
+product_bids = Bid.objects.filter(product__name="Coin1")
+for bid in product_bids:
+    print(bid.amount, bid.user.username, bid.timestamp)
+
+bids placed by a specific user:
+user_bids = Bid.objects.filter(user__username="john_doe")
+for bid in user_bids:
+    print(bid.product.name, bid.amount, bid.timestamp)
+

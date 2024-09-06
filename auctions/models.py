@@ -20,6 +20,11 @@ class Product(models.Model):
     
     def is_active(self): #To determine whether the auction is still active
         return self.end_date > timezone.now()
+    
+    # Method to return the highest bid for this product
+    def highest_bid(self):
+        highest_bid = self.bids.order_by('-amount').first()  # Get the highest bid
+        return highest_bid.amount if highest_bid else self.starting_bid
 
 
 class Bid(models.Model):
