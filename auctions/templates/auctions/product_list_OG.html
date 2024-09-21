@@ -1,0 +1,81 @@
+<!-- ICS-auction/auctions/templates/auctions/product_list.html -->
+<body>
+    {% if user.is_authenticated %}
+        <p>Welcome, {{ user.username }}!</p>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Logout</button>
+        </form>
+    {% else %}
+        <p>You are not logged in. <a href="{% url 'login' %}">Login</a></p>
+    {% endif %}
+
+    <h1>Product List</h1>
+    <ul>
+        {% for product in products %}
+            <li>
+                {{ product.name }} - Starting Bid: {{ product.starting_bid }} <br>
+                Current Bid: {{ product.current_bid }} <br>
+                {{ product.end_date|date:'d M Y H:i:s' }}
+    
+                <!-- Timer display for this product -->
+                <div id="timer-{{ product.id }}"></div>
+
+                <!-- Unique form for each product -->
+                <form id="bid-form-{{ product.id }}" method="post" action="{% url 'place_bid' product.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    <label for="amount_{{ product.id }}">Amount:</label>
+
+                    <!-- Allow decimal values for the bid amount -->
+                    <input type="number" id="amount_{{ product.id }}" name="amount" required min="0.01" step="0.01">
+                    
+                    <button type="submit">Place Bid</button>
+                </form>
+
+                <!-- Display error message specific to this product -->
+                {% if error_message and error_message|default_if_none:'' and product.id in error_message %}
+                    <p style="color: red;">{{ error_message|safe }}</p>
+                {% endif %}
+
+                <script>
+                    (function() {
+                        // Pass the auction end date as an ISO string in UTC format
+                        var countDownDate = new Date("{{ product.end_date|date:'Y-m-d\\TH:i:s\\Z' }}").getTime();
+                        var productId = "{{ product.id }}";
+            
+                        // Update the countdown every second
+                        var x = setInterval(function() {
+                            var now = new Date().getTime();  // Get current time in local timezone
+                            var distance = countDownDate - now;
+            
+                            // Time calculations for days, hours, minutes, and seconds
+                            var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                            var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                            var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+                            // Display the result in the element with id="timer-productID"
+                            document.getElementById("timer-" + productId).innerHTML = days + "d " + hours + "h "
+                            + minutes + "m " + seconds + "s ";
+            
+                            // If the countdown is finished, write some text and hide the bid form
+                            if (distance < 0) {
+                                clearInterval(x);
+                                document.getElementById("timer-" + productId).innerHTML = "Auction Ended";
+            
+                                // Hide the place bid button when the auction has ended
+                                var bidForm = document.getElementById("bid-form-" + productId);
+                                if (bidForm) {
+                                    bidForm.style.display = 'none';  // Hide the form
+                                }
+                            }
+                        }, 1000);
+                    })();
+                </script>            
+
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
