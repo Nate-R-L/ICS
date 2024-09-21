@@ -1,15 +1,42 @@
-<h1>Join Our Auction Platform!</h1>
+{% extends 'base.html' %}
 
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-        <div>
-            {{ field.label_tag }}
-            {{ field }}
-            <!-- Help text is not rendered here -->
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">Sign Up</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" name="username" class="form-control" required id="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" name="email" class="form-control" required id="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password1">Password</label>
+                            <input type="password" name="password1" class="form-control" required id="password1">
+                        </div>
+                        <div class="form-group">
+                            <label for="password2">Confirm Password</label>
+                            <input type="password" name="password2" class="form-control" required id="password2">
+                        </div>
+                        <button type="submit" class="btn btn-success btn-block">Sign Up</button>
+                    </form>
+                </div>
+                <div class="card-footer text-center">
+                    <p>Already have an account? <a href="{% url 'login' %}">Login here</a></p>
+                </div>
+            </div>
         </div>
-    {% endfor %}
-    <button type="submit">Sign Up</button>
-</form>
-
-<p>Already have an account? <a href="{% url 'login' %}">Login here</a>.</p>
+    </div>
+</div>
+{% endblock %}
