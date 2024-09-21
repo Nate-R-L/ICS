@@ -18,9 +18,10 @@ class BidForm(forms.ModelForm):
 
 #Class to allow for custom user signup HTML
 class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, help_text="Required. Enter a valid email address.")
     class Meta:
         model = User
-        fields = ('username', 'password1', 'password2')
+        fields = ('username', 'password1', 'password2','email')
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'Choose your username'}),
             'password1': forms.PasswordInput(attrs={'placeholder': 'Enter a secure password'}),
@@ -33,6 +34,14 @@ class CustomUserCreationForm(UserCreationForm):
             'password2': None,
             'usable_password':None,
         }
+
+    def save(self, commit=True):
+        user = super(CustomUserCreationForm, self).save(commit=False)  # Create the user object but don't save it yet
+        user.email = self.cleaned_data['email']  # Assign the cleaned email field to the user
+        if commit:
+            user.save()  # Save the user if commit is True
+        return user  # Return the user object
+
 
     # Delete the authentifcation poppup & force to enable
     def __init__(self, *args, **kwargs):
