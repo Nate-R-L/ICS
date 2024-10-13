@@ -15,6 +15,12 @@
     {% endif %}
 
     <h1 class="text-center mb-4">Product List</h1>
+        <!-- Filter Buttons -->
+        <div class="text-center mb-3">
+            <a href="?filter=all" class="btn btn-secondary {% if filter_type == 'all' %}active{% endif %}">All Auctions</a>
+            <a href="?filter=ongoing" class="btn btn-success {% if filter_type == 'ongoing' %}active{% endif %}">Ongoing Auctions</a>
+            <a href="?filter=ended" class="btn btn-danger {% if filter_type == 'ended' %}active{% endif %}">Ended Auctions</a>
+        </div>    
 
     <div class="row">
         {% for product in products %}
@@ -76,7 +82,9 @@
                         if (bidForm) {
                             bidForm.style.display = 'none';
                         }
-                    }
+                    } else {
+                        document.getElementById("timer-" + productId).classList.add("red-timer")
+                    };
                 }, 1000);
             })();
         </script>
