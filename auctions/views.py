@@ -103,3 +103,17 @@ def signup(request):
     else:
         form = CustomUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+### ACCOUNT VIEW
+@login_required
+def account_view(request):
+    # Get all bids made by the currently logged-in user
+    user_bids = Bid.objects.filter(user=request.user).select_related('product')
+
+    # You can access user details directly from request.user
+    user = request.user
+
+    return render(request, 'auctions/account.html', {
+        'user_bids': user_bids,
+        'user': user  # Pass the user object to the template
+    })
