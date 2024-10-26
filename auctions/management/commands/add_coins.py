@@ -1,5 +1,8 @@
 # auctions/management/commands/add_coins.py
 
+### TO RUN
+# python manage.py add_coins.py
+
 from django.core.management.base import BaseCommand
 from auctions.models import Product
 from django.utils import timezone
@@ -16,7 +19,7 @@ class Command(BaseCommand):
                 starting_bid=10.00 + i,
                 current_bid=0.00,
                 end_date=timezone.now() + timedelta(days=30),
-                picture_link = 'static/images/IMG_3479.png'
+                picture_link = 'IMG_3479.png'
             )
             for i in range(1, 3)  # Add 2 coins as an example
         ]
