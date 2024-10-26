@@ -26,13 +26,17 @@
         {% for product in products %}
         <div class="col-md-4 mb-4">
             <div class="card shadow-sm">
-                <img src="{{ product.picture_link }}" class="card-img-top" alt="{{ product.name }}">
+                <a href="{% url 'product_detail' product.id %}">
+                    <img src="static/images/{{ product.picture_link }}" class="card-img-top" alt="{{ product.name }}">
+                </a>
                 <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
+                    <h5 class="card-title">
+                        <a href="{% url 'product_detail' product.id %}">{{ product.name }}</a>
+                    </h5>
                     <p class="card-text">Starting Bid: ${{ product.starting_bid }}</p>
                     <p class="card-text">Current Bid: ${{ product.current_bid }}</p>
                     <p class="card-text">Auction Ends: {{ product.end_date|date:'d M Y H:i:s' }}</p>
-                    
+
                     <!-- Timer display for this product -->
                     <div id="timer-{{ product.id }}" class="mb-3"></div>
 
@@ -47,11 +51,9 @@
                         </div>
                     </form>
 
-                    <!-- Display error message specific to this product -->
+                                    <!-- Display error message specific to this product -->
                     {% if error_message and error_message|default_if_none:'' and product.id in error_message %}
-                    <div class="alert alert-danger" role="alert">
-                        {{ error_message|safe }}
-                    </div>
+                        <p style="color: red;">{{ error_message|safe }}</p>
                     {% endif %}
                 </div>
             </div>

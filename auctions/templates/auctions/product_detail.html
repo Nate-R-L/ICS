@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} Details{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left column: Product Image -->
+        <div class="col-md-6">
+            <img src="../../static/images/{{ product.picture_link }}" class="img-fluid" alt="{{ product.name }}">
+        </div>
+
+        <!-- Right column: Product Information -->
+        <div class="col-md-6">
+            <h2>{{ product.name }}</h2>
+            <p class="text-muted">Product ID: {{ product.id }}</p>
+
+            <!-- Time Left -->
+            <p><strong>Time left:</strong> 
+                <span id="time-left"></span> 
+                <br>
+                (Auction ends: {{ product.end_date|date:'d M Y H:i:s' }})
+            </p>
+
+            <!-- Starting Bid & Current Bid -->
+            <div class="alert alert-light">
+                <strong>Starting Bid:</strong> ${{ product.starting_bid }} <br>
+                <strong>Current Bid:</strong> ${{ product.current_bid }}
+            </div>
+
+            <!-- Bid Form -->
+            <form method="post" action="{% url 'place_bid' product.id %}">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" name="amount" required min="0.01" step="0.01" placeholder="Your max bid">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Place Bid</button>
+                    </div>
+                </div>
+                <small class="text-muted">Enter ${{ product.current_bid }} or more.</small>
+            </form>
+
+            <!-- Product Metadata -->
+            <div class="mt-4">
+                <p><strong>Product Description:</strong> {{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Countdown timer for product auction
+    var countDownDate = new Date("{{ product.end_date|date:'Y-m-d\\TH:i:s\\Z' }}").getTime();
+    var x = setInterval(function() {
+        var now = new Date().getTime();
+        var distance = countDownDate - now;
+
+        var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("time-left").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+        if (distance < 0) {
+            clearInterval(x);
+            document.getElementById("time-left").innerHTML = "Auction Ended";
+        }
+    }, 1000);
+</script>
+{% endblock %}

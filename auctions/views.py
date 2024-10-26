@@ -63,6 +63,12 @@ def product_list(request):
         form = BidForm()
         return render(request, 'auctions/product_list.html', {'products': products, 'form': form})
 
+def product_detail(request, product_id):
+    # Fetch the specific product (coin) by its ID
+    product = get_object_or_404(Product, id=product_id)
+    
+    return render(request, 'auctions/product_detail.html', {'product': product})
+
 ### PLACE BID VIEW - REQUIRED LOGIN
 @login_required
 def place_bid(request, product_id):
