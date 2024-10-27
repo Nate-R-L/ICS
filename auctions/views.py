@@ -7,6 +7,7 @@ from django.http import HttpResponseForbidden
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from decimal import Decimal
+from django.db.models import Max
 
 ### PRODUCT LIST VIEW ###
 @login_required
@@ -113,13 +114,18 @@ def signup(request):
 ### ACCOUNT VIEW
 @login_required
 def account_view(request):
-    # Get all bids made by the currently logged-in user
-    user_bids = Bid.objects.filter(user=request.user).select_related('product')
-
-    # You can access user details directly from request.user
     user = request.user
 
-    return render(request, 'auctions/account.html', {
-        'user_bids': user_bids,
-        'user': user  # Pass the user object to the template
-    })
+    # Get the most recent bid for each product by the logged-in user
+    user_bids = Bid.objects.filter(user=user).values('product').annotate(latest_bid=Max('id'))
+
+    # Fetch the actual bid objects for those latest bids
+    recent_bids = Bid.objects.filter(id__in=[bid['latest_bid'] for bid in user_bids]).select_related('product')
+
+    # Fetch the maximum bid for each product
+    for bid in recent_bids:
+        max_bid = Bid.objects.filter(product=bid.product).aggregate(Max('amount'))['amount__max']
+        bid.max_bid = max_bid
+        bid.is_winning = bid.amount == max_bid  # True if the user's bid matches the highest bid
+
+    return render(request, 'auctions/account.html', {'recent_bids': recent_bids})

@@ -20,21 +20,35 @@
     </div>
 
     <!-- User's Bids Section -->
-    <h4 class="mb-3">My Bids</h4>
-    {% if user_bids %}
+    <h4 class="mb-3">My Recent Bids</h4>
+    {% if recent_bids %}
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th>Product</th>
-                    <th>Bid Amount</th>
-                    <th>Date</th>
+                    <th>Your Bid</th>
+                    <th>Coin Highest Bid</th>
+                    <th>Status</th>
+                    <th>Bid Date</th>
                 </tr>
             </thead>
             <tbody>
-                {% for bid in user_bids %}
+                {% for bid in recent_bids %}
                 <tr>
-                    <td>{{ bid.product.name }}</td>
+                    <td>
+                        <a href="{% url 'product_detail' bid.product.id %}">
+                            {{ bid.product.name }}
+                        </a>
+                    </td>
                     <td>${{ bid.amount }}</td>
+                    <td>${{ bid.max_bid }}</td>
+                    <td>
+                        {% if bid.is_winning %}
+                            <span class="text-success">Winning</span>
+                        {% else %}
+                            <span class="text-danger">Losing</span>
+                        {% endif %}
+                    </td>
                     <td>{{ bid.created_at|date:'d M Y H:i:s' }}</td>
                 </tr>
                 {% endfor %}
