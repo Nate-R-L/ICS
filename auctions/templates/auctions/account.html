@@ -21,42 +21,54 @@
 
     <!-- User's Bids Section -->
     <h4 class="mb-3">My Recent Bids</h4>
-    {% if recent_bids %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Your Bid</th>
-                    <th>Coin Highest Bid</th>
-                    <th>Status</th>
-                    <th>Bid Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for bid in recent_bids %}
-                <tr>
-                    <td>
-                        <a href="{% url 'product_detail' bid.product.id %}">
-                            {{ bid.product.name }}
-                        </a>
-                    </td>
-                    <td>${{ bid.amount }}</td>
-                    <td>${{ bid.max_bid }}</td>
-                    <td>
-                        {% if bid.is_winning %}
-                            <span class="text-success">Winning</span>
+{% if recent_bids %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Your Bid</th>
+                <th>Max Bid</th>
+                <th>Status</th>
+                <th>Bid Date</th>
+                <th>Result</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bid in recent_bids %}
+            <tr>
+                <td>
+                    <a href="{% url 'product_detail' bid.product.id %}">
+                        {{ bid.product.name }}
+                    </a>
+                </td>
+                <td>${{ bid.amount }}</td>
+                <td>${{ bid.max_bid }}</td>
+                <td>
+                    {% if bid.is_winning %}
+                        <span class="text-success">Winning</span>
+                    {% else %}
+                        <span class="text-danger">Losing</span>
+                    {% endif %}
+                </td>
+                <td>{{ bid.created_at|date:'d M Y H:i:s' }}</td>
+                <td>
+                    {% if bid.auction_ended %}
+                        {% if bid.result == "won" %}
+                            <span class="text-success">Won</span>
                         {% else %}
-                            <span class="text-danger">Losing</span>
+                            <span class="text-danger">Lost</span>
                         {% endif %}
-                    </td>
-                    <td>{{ bid.created_at|date:'d M Y H:i:s' }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p class="text-center">You haven't placed any bids yet.</p>
-    {% endif %}
+                    {% else %}
+                        <span class="text-muted">Ongoing</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p class="text-center">You haven't placed any bids yet.</p>
+{% endif %}
 </div>
 {% endblock %}
 

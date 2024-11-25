@@ -8,6 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from decimal import Decimal
 from django.db.models import Max
+from django.utils.timezone import now
 
 ### PRODUCT LIST VIEW ###
 @login_required
@@ -122,10 +123,17 @@ def account_view(request):
     # Fetch the actual bid objects for those latest bids
     recent_bids = Bid.objects.filter(id__in=[bid['latest_bid'] for bid in user_bids]).select_related('product')
 
-    # Fetch the maximum bid for each product
+    # Determine auction status and outcome
     for bid in recent_bids:
-        max_bid = Bid.objects.filter(product=bid.product).aggregate(Max('amount'))['amount__max']
-        bid.max_bid = max_bid
-        bid.is_winning = bid.amount == max_bid  # True if the user's bid matches the highest bid
+        product = bid.product
+        bid.max_bid = Bid.objects.filter(product=product).aggregate(Max('amount'))['amount__max']
+        bid.is_winning = bid.amount == bid.max_bid
+        bid.auction_ended = product.end_date <= now()  # Check if the auction has ended
+
+        # Determine result: "won" or "lost"
+        if bid.auction_ended:
+            bid.result = "won" if bid.is_winning else "lost"
+        else:
+            bid.result = None  # Auction is still ongoing
 
     return render(request, 'auctions/account.html', {'recent_bids': recent_bids})
