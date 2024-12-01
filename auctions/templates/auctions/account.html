@@ -17,6 +17,9 @@
             <p><strong>Date Joined:</strong> {{ user.date_joined|date:'d M Y' }}</p>
             <p><strong>Last Login:</strong> {{ user.last_login|date:'d M Y H:i:s' }}</p>
         </div>
+        <div class="card-footer text-right">
+            <a href="{% url 'edit_user_info' %}" class="btn btn-warning">Edit User Information</a>
+        </div>
     </div>
 
     <!-- User's Bids Section -->

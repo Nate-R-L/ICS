@@ -48,3 +48,9 @@ class CustomUserCreationForm(UserCreationForm):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         if 'usable_password' in self.fields:
             del self.fields['usable_password']
+
+#Edit user metadata in account page
+class EditUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'first_name', 'last_name']  # Fields the user can edit

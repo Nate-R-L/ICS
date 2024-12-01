@@ -9,6 +9,7 @@ from django.contrib.auth import login, authenticate
 from decimal import Decimal
 from django.db.models import Max
 from django.utils.timezone import now
+from .forms import EditUserForm
 
 ### PRODUCT LIST VIEW ###
 @login_required
@@ -137,3 +138,17 @@ def account_view(request):
             bid.result = None  # Auction is still ongoing
 
     return render(request, 'auctions/account.html', {'recent_bids': recent_bids})
+
+@login_required
+def edit_user_info(request):
+    user = request.user
+
+    if request.method == 'POST':
+        form = EditUserForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('account')  # Redirect back to the profile page
+    else:
+        form = EditUserForm(instance=user)
+
+    return render(request, 'auctions/edit_user_info.html', {'form': form})
